@@ -4,7 +4,7 @@ content = contents.split(">")
 
 genomes = []        # a list of full one line genomes
 length = 0          # a length of single genome
-base = []       #the first genome - oldest one without mutations
+base = []       #search for the first genome - oldest one without mutations
 
 #[A, G, T, C]
 for genome in content:
@@ -17,8 +17,8 @@ for genome in content:
         length = len(gen)
         for i in range(length):
             base.append({"A":0, "T":0, "G":0, "C":0})   #[0, 0, 0, 0] [A, T, G, C]
-        #print("Each sequence is consists of:", length, "oligonucleotides")
-    for i, letter in enumerate(gen):
+        #print("Each sequence consists of:", length, "oligonucleotides")
+    for i, letter in enumerate(gen):    #counting how many times a letter appears in each collumn
         if letter == "A":
             base[i]["A"]+=1
         if letter == "T":
@@ -29,7 +29,7 @@ for genome in content:
             base[i]["C"]+=1
 genomes = genomes[1:]
 genome_amount = len(genomes)
-gen_count= [0] * genome_amount  #ile razy każdy gen był taki jak najczęstsze wystąpienie
+gen_count= [0] * genome_amount  #how many times each gene had the most frequent oligonucleotide \\ile razy każdy gen był taki jak najczęstsze wystąpienie
 #base_seq = ""
 impact_letter_num_list = []
 for i, dict in enumerate(base):
@@ -40,8 +40,8 @@ for i, dict in enumerate(base):
     else:           #some mutated
         for j, genome in enumerate(genomes):    #for each genome give him one
             if(genome[i]==frequent):
-                gen_count[j]+=1             #ile razy każdy gen był taki jak najczęstsze wystąpienie
-        impact_letter_num_list.append(i)    #kolumny, których nie usówamy
+                gen_count[j]+=1             #how many times each gene had the most frequent oligonucleotide \\ile razy każdy gen był taki jak najczęstsze wystąpienie
+        impact_letter_num_list.append(i)    #collumns we do not delete - segregating sites \\kolumny, których nie usuwamy
         #the collumns with mutations
 max_count = 0
 max_count_iterator = None
@@ -49,16 +49,16 @@ for i, g in enumerate(gen_count):
     if g>max_count:
         max_count = g
         max_count_iterator = i
-long_base_seq=genomes[max_count_iterator]     #z najwyższym countem - czyli najczestszy (na razie cały)
+long_base_seq=genomes[max_count_iterator]     #the genome with the highest count, the not mutated one  \\z najwyższym countem - czyli najczestszy (na razie cały)
 base_seq =""
 for i, letter in enumerate(long_base_seq):
     if(i in impact_letter_num_list):
         base_seq+=letter
-#print("MAAAXX", max_count,"the ase iterator:", max_count_iterator, "len of a BASE", len(base_seq), "the gene", base_seq)
+#print("MAAAXX", max_count,"the base iterator:", max_count_iterator, "len of a BASE", len(base_seq), "the gene", base_seq)
 #print("meaning base: len", len(base_seq),base_seq)
 #print(base)
 
-#USUWAMY NIEZNACZĄCE KOLUMNY
+#WE DELETE THE NON SIGNIFICANT COLLUMNS (WITHOUT ANY MUTATIONS) \\USUWAMY NIEZNACZĄCE KOLUMNY
 meaning_genoms = []
 for j, genome in enumerate(genomes):
     new_genome=''
@@ -67,13 +67,6 @@ for j, genome in enumerate(genomes):
             new_genome+='0'
         else:
             new_genome+='1'
-    # print(j)
-    # print("new gen len", len(new_genome), new_genome)
-    # if(j == max_count_iterator):
-    #     if('1' in new_genome):
-    #         print("ERROR")
-    #     else:
-    #         print("The base sequence consists of only 0 - CORRECT")
     meaning_genoms.append(str(new_genome))
 base_seq = meaning_genoms[max_count_iterator]
 print("There are", len(meaning_genoms), "sequences.")
